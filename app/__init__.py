@@ -3,7 +3,11 @@ import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
+from . import tasks
+from .schedule.extension import FlaskCelery
+
 db = SQLAlchemy()
+task_queue = FlaskCelery('FlaskCeleryBoilerplate')
 
 
 def create_app(config_key: str = None) -> Flask:
@@ -11,6 +15,7 @@ def create_app(config_key: str = None) -> Flask:
     _load_config(app, config_key)
 
     db.init_app(app)
+    task_queue.init_app(app)
 
     return app
 

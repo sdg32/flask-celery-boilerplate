@@ -14,6 +14,11 @@ class BaseConfig:
     SQLALCHEMY_RECORD_QUERIES = True
     SQLALCHEMY_SLOW_QUERY = 0.5
 
+    CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'redis://localhost:6379/0')
+    CELERY_ENABLE_UTC = True
+    CELERY_TIMEZONE = os.getenv('TIMEZONE', 'Asia/Shanghai')
+    CELERY_BEAT_SCHEDULE = {}
+
     @staticmethod
     def init_app(app):
         pass
