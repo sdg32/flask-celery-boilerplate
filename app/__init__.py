@@ -17,6 +17,8 @@ def create_app(config_key: str = None) -> Flask:
     db.init_app(app)
     task_queue.init_app(app)
 
+    from .schedule import models
+
     return app
 
 

@@ -7,6 +7,7 @@ class BaseConfig:
     SECRET_KEY = os.getenv('SECRET_KEY', 'some secret string')
     DEBUG = False
     TESTING = False
+    TIMEZONE = os.getenv('TIMEZONE', 'Asia/Shanghai')
 
     SQLALCHEMY_DATABASE_URI = None
     SQLALCHEMY_COMMIT_ON_TEARDOWN = False
@@ -18,6 +19,7 @@ class BaseConfig:
     CELERY_ENABLE_UTC = True
     CELERY_TIMEZONE = os.getenv('TIMEZONE', 'Asia/Shanghai')
     CELERY_BEAT_SCHEDULE = {}
+    CELERY_BEAT_SCHEDULER = 'app.schedule.schedulers:DatabaseScheduler'
 
     @staticmethod
     def init_app(app):
