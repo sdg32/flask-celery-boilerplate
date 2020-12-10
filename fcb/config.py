@@ -19,7 +19,7 @@ class BaseConfig:
     CELERY_ENABLE_UTC = True
     CELERY_TIMEZONE = os.getenv('TIMEZONE', 'Asia/Shanghai')
     CELERY_BEAT_SCHEDULE = {}
-    CELERY_BEAT_SCHEDULER = 'app.schedule.schedulers:DatabaseScheduler'
+    CELERY_BEAT_SCHEDULER = 'fcb.schedule.schedulers:DatabaseScheduler'
 
     @staticmethod
     def init_app(app):

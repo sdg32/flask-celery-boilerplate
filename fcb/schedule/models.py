@@ -4,10 +4,10 @@ from datetime import timedelta
 from celery import schedules
 from sqlalchemy import inspect
 
-from app import db
-from app.helpers.sqla import GUID
-from app.helpers.sqla import json_dict
-from app.helpers.sqla import json_list
+from fcb import db
+from fcb.helpers.sqla import GUID
+from fcb.helpers.sqla import json_dict
+from fcb.helpers.sqla import json_list
 
 
 class CrontabSchedule(db.Model):

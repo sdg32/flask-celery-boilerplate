@@ -1,8 +1,8 @@
 from flask import g
 
-from app import create_app
-from app import db
-from app import task_queue
+from fcb import create_app
+from fcb import db
+from fcb import task_queue
 
 app = application = create_app()
 

@@ -1,19 +1,19 @@
+import pytz
 from celery import current_app as celery_app
 from celery import schedules
 from celery.beat import ScheduleEntry
 from celery.beat import Scheduler
-from celery.utils.encoding import safe_str
-from celery.utils.encoding import safe_repr
 from celery.utils.log import get_logger
 from flask import current_app
-import pytz
+from kombu.utils.encoding import safe_repr
+from kombu.utils.encoding import safe_str
 
-from app import db
+from fcb import db
 from .models import CrontabSchedule
 from .models import IntervalSchedule
-from .models import SolarSchedule
 from .models import PeriodicTask
 from .models import PeriodicTasks
+from .models import SolarSchedule
 
 DEFAULT_MAX_INTERVAL = 5  # seconds
 
