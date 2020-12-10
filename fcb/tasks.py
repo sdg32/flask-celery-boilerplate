@@ -5,5 +5,4 @@ from flask import current_app
 
 @shared_task(name='print_app')
 def print_app():
-    print('Flask application: {}'.format(current_app))
-    print('Celery application: {}'.format(celery_app))
+    print(f'flask: {current_app}, celery: {celery_app}')

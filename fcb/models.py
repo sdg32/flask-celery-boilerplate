@@ -5,9 +5,9 @@ from celery import schedules
 from sqlalchemy import inspect
 
 from fcb import db
-from fcb.helpers.sqla import GUID
-from fcb.helpers.sqla import json_dict
-from fcb.helpers.sqla import json_list
+from fcb.utils.sqltypes import GUID
+from fcb.utils.sqltypes import json_dict
+from fcb.utils.sqltypes import json_list
 
 
 class CrontabSchedule(db.Model):

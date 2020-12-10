@@ -9,11 +9,11 @@ from kombu.utils.encoding import safe_repr
 from kombu.utils.encoding import safe_str
 
 from fcb import db
-from .models import CrontabSchedule
-from .models import IntervalSchedule
-from .models import PeriodicTask
-from .models import PeriodicTasks
-from .models import SolarSchedule
+from fcb.models import CrontabSchedule
+from fcb.models import IntervalSchedule
+from fcb.models import PeriodicTask
+from fcb.models import PeriodicTasks
+from fcb.models import SolarSchedule
 
 DEFAULT_MAX_INTERVAL = 5  # seconds
 
@@ -21,7 +21,7 @@ logger = get_logger(__name__)
 
 
 def local_to_utc(dt):
-    local = pytz.timezone(current_app.config['TIMEZONE'])
+    local = pytz.timezone(current_app.config['CELERY_TIMEZONE'])
     local_dt = local.localize(dt, is_dst=None)
     return local_dt.astimezone(pytz.utc).replace(tzinfo=None)
 
