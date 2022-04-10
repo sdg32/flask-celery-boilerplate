@@ -1,43 +1,63 @@
+from typing import Any
+
 from celery import Celery
 from celery.app.task import Task as BaseTask
 from flask import Flask
+from flask import current_app
 from flask import has_app_context
 
 
 class FlaskCelery:
-    """Flask celery extension."""
+    """Flask celery extension.
 
-    _celery: Celery = None
-    app: Flask = None
+    :param app: optional Flask application
+    """
 
-    def __init__(self, name: str, app: Flask = None):
-        self._celery = Celery(name)
+    app: Flask | None = None
+
+    def __init__(self, app: Flask | None = None) -> None:
         self.app = app
 
         if app is not None:
             self.init_app(app)
 
     @property
-    def c(self) -> Celery:
-        return self._celery
+    def celery(self) -> Celery:
+        """Celery application."""
+        state: _CeleryState = current_app.extensions['celery']
+        return state.celery
 
-    @property
-    def task(self):
-        return self._celery.task
+    def init_app(self, app: Flask) -> None:
+        """Initialize extension.
 
-    def init_app(self, app: Flask):
-        self._celery.conf.update(app.config.get_namespace('CELERY_'))
+        :param app: Flask application
+        """
 
         class ContextTask(BaseTask):
+            """Celery task within Flask context."""
 
-            def run(self, *args, **kwargs):
+            def run(self, *args: Any, **kwargs: Any) -> Any:
                 raise NotImplementedError()
 
-            def __call__(self, *args, **kwargs):
+            def __call__(self, *args: Any, **kwargs: Any) -> Any:
                 if has_app_context():
                     return super().__call__(*args, **kwargs)
                 with app.app_context():
                     return super().__call__(*args, **kwargs)
 
-        self._celery.task_cls = ContextTask
-        app.extensions['celery'] = self
+        client = Celery(app.import_name, task_cls=ContextTask)
+        client.conf.update(app.config.get_namespace('CELERY_'))
+
+        app.extensions['celery'] = _CeleryState(client)
+
+
+class _CeleryState:
+    """Flask celery extension state.
+
+    :param celery: Celery application
+    """
+
+    celery: Celery
+
+    def __init__(self, celery: Celery) -> None:
+        self.celery = celery

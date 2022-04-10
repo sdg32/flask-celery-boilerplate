@@ -10,7 +10,7 @@ from fcb.ext.celery import FlaskCelery
 from .config import config
 
 db = SQLAlchemy()
-tq = FlaskCelery('fcb')
+tq = FlaskCelery()
 
 
 def create_app(config_key: str = None, config_override: dict = None) -> Flask:

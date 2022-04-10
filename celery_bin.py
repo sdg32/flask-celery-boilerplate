@@ -5,4 +5,4 @@ flask = create_app()
 flask_context = flask.app_context()
 flask_context.push()
 
-app = celery = tq.c
+app = celery = tq.celery
