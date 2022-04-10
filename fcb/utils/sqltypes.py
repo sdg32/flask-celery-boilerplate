@@ -17,6 +17,7 @@ class GUID(TypeDecorator):
     """GUID column."""
 
     impl = CHAR
+    cache_ok = True
 
     def load_dialect_impl(self, dialect):
         if dialect.name == 'postgresql':
@@ -53,6 +54,7 @@ class JSON(TypeDecorator):
     """JSON column."""
 
     impl = TEXT
+    cache_ok = True
 
     def process_bind_param(self, value, dialect):
         if value is not None:

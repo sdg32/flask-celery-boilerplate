@@ -1,8 +1,10 @@
 import importlib
 import os
+from typing import FrozenSet
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import Mapper
 
 from fcb.ext.celery import FlaskCelery
 from .config import config
@@ -36,9 +38,8 @@ def _make_shell_context() -> dict:
     """Make python shell context."""
     from . import __version__
 
-    model_registry = getattr(db.Model, '_decl_class_registry')
-    models = {k: v for k, v in model_registry.items()
-              if k != '_sa_module_registry'}
+    mappers: FrozenSet[Mapper] = db.Model.registry.mappers
+    models = {x.entity.__name__: x.entity for x in mappers}
 
     return dict(__version__=__version__,
                 db=db, task_queue=tq,
