@@ -1,11 +1,14 @@
 import os
 from datetime import timedelta
+from typing import Any
 
 from dotenv import dotenv_values
 from flask import Flask
 
 
 class BaseConfig:
+    """Base configuration."""
+
     # region Flask config
     SECRET_KEY = b'\x1c\xea\xabzG\x887\x1b\x0fM\x10#cwM=O\xb7\xe7>>\xed\xef)'
     DEBUG = False
@@ -36,10 +39,19 @@ class BaseConfig:
     # Additional flask config file
     additional: str = 'config.py'
 
-    def init_app(self, app: Flask, override: dict = None):
+    def init_app(
+            self,
+            app: Flask,
+            overrides: dict[str, Any] | None = None,
+    ) -> None:
+        """Initialize app configuration.
+
+        :param app: Flask application
+        :param overrides: optional override default configurations
+        """
         mapping = {k: v for k, v in dotenv_values().items()
                    if not k.startswith('FLASK_')}
-        mapping |= (override or {})
+        mapping |= (overrides or {})
 
         app.config.from_object(self)
         app.config.from_pyfile(self.additional, silent=True)
@@ -52,18 +64,24 @@ class BaseConfig:
 
 
 class DevelopmentConfig(BaseConfig):
+    """Development configuration."""
+
     DEBUG = True
 
     additional = 'config_dev.py'
 
 
 class TestingConfig(BaseConfig):
+    """Testing configuration."""
+
     TESTING = True
 
     additional = 'config_test.py'
 
 
 class ProductionConfig(BaseConfig):
+    """Production configuration."""
+
     additional = 'config.py'
 
 
