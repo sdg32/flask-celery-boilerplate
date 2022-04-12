@@ -1,5 +1,5 @@
-from fcb import create_app
-from fcb import tq
+from fcb.app import create_app
+from fcb.app import tq
 
 flask = create_app()
 flask_context = flask.app_context()

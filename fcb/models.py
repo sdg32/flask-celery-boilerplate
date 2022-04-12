@@ -12,7 +12,7 @@ from sqlalchemy import inspect
 from sqlalchemy.engine import Connection
 from sqlalchemy.orm import Mapper
 
-from fcb import db
+from fcb.app import db
 from fcb.utils.sqltypes import GUID
 from fcb.utils.sqltypes import json_dict
 from fcb.utils.sqltypes import json_list

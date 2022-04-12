@@ -1,66 +1,53 @@
-import os
 from datetime import timedelta
 from typing import Any
 
-from dotenv import dotenv_values
 from flask import Flask
 
 
 class BaseConfig:
     """Base configuration."""
 
-    # region Flask config
-    SECRET_KEY = b'\x1c\xea\xabzG\x887\x1b\x0fM\x10#cwM=O\xb7\xe7>>\xed\xef)'
-    DEBUG = False
-    TESTING = False
-    # endregion
+    #: Flask secret key
+    SECRET_KEY: str | bytes = 'f12cae1080574dd992ec22b378399616'
+    #: Debug mode
+    DEBUG: bool = False
+    #: Testing mode
+    TESTING: bool = False
 
-    # region ORM config
-    SQLALCHEMY_DATABASE_URI = None
-    SQLALCHEMY_COMMIT_ON_TEARDOWN = False
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SQLALCHEMY_RECORD_QUERIES = True
-    SQLALCHEMY_SLOW_QUERY = 0.5
-    # endregion
+    #: SQLAlchemy database URI
+    SQLALCHEMY_DATABASE_URI: str = 'sqlite:///:memory:'
+    #: Whether to track modifications
+    SQLALCHEMY_TRACK_MODIFICATIONS: bool = False
+    #: Whether to record db queries
+    SQLALCHEMY_RECORD_QUERIES: bool = True
+    #: Slow query duration
+    SQLALCHEMY_SLOW_QUERY: int | float = 0.5
 
-    # region Celery config
-    CELERY_BROKER_URL = 'redis://localhost:6379/0'
-    CELERY_ENABLE_UTC = True
-    CELERY_TIMEZONE = 'Asia/Shanghai'
-    CELERY_BEAT_SCHEDULE = {
+    #: Celery broker URL
+    CELERY_BROKER_URL: str = 'redis://localhost:6379/0'
+    #: Celery enabled UTC time
+    CELERY_ENABLE_UTC: bool = True
+    #: Celery timezone
+    CELERY_TIMEZONE: str = 'Asia/Shanghai'
+    #: Celery BEAT schedules
+    CELERY_BEAT_SCHEDULE: dict[str, Any] = {
         'print_app_every_10_seconds': {
             'task': 'print_app',
             'schedule': timedelta(seconds=10),
         }
     }
-    CELERY_BEAT_SCHEDULER = 'fcb.schedulers:DatabaseScheduler'
-    # endregion
+    #: Celery BEAT scheduler path
+    CELERY_BEAT_SCHEDULER: str = 'fcb.schedulers:DatabaseScheduler'
 
-    # Additional flask config file
-    additional: str = 'config.py'
+    #: Extra config file in instance folder
+    EXTRA_INSTANCE_CONFIG: str = 'config.py'
 
-    def init_app(
-            self,
-            app: Flask,
-            overrides: dict[str, Any] | None = None,
-    ) -> None:
+    def init_app(self, app: Flask) -> None:
         """Initialize app configuration.
 
         :param app: Flask application
-        :param overrides: optional override default configurations
         """
-        mapping = {k: v for k, v in dotenv_values().items()
-                   if not k.startswith('FLASK_')}
-        mapping |= (overrides or {})
-
-        app.config.from_object(self)
-        app.config.from_pyfile(self.additional, silent=True)
-        app.config.from_mapping(mapping)
-
-        # Default database uri
-        if not app.config['SQLALCHEMY_DATABASE_URI']:
-            db_file = os.path.join(app.instance_path, 'sqlite3.db')
-            app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_file}'
+        pass
 
 
 class DevelopmentConfig(BaseConfig):
@@ -68,7 +55,7 @@ class DevelopmentConfig(BaseConfig):
 
     DEBUG = True
 
-    additional = 'config_dev.py'
+    EXTRA_INSTANCE_CONFIG = 'config_dev.py'
 
 
 class TestingConfig(BaseConfig):
@@ -76,19 +63,17 @@ class TestingConfig(BaseConfig):
 
     TESTING = True
 
-    additional = 'config_test.py'
+    EXTRA_INSTANCE_CONFIG = 'config_test.py'
 
 
 class ProductionConfig(BaseConfig):
     """Production configuration."""
 
-    additional = 'config.py'
+    EXTRA_INSTANCE_CONFIG = 'config.py'
 
 
-config: dict[str, type[BaseConfig]] = {
+config_map: dict[str, type[BaseConfig]] = {
     'development': DevelopmentConfig,
     'testing': TestingConfig,
     'production': ProductionConfig,
-
-    'default': DevelopmentConfig,
 }

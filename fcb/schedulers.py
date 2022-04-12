@@ -15,7 +15,7 @@ from flask import current_app
 from kombu.utils.encoding import safe_repr
 from kombu.utils.encoding import safe_str
 
-from fcb import db
+from fcb.app import db
 from fcb.models import CrontabSchedule
 from fcb.models import IntervalSchedule
 from fcb.models import ModelSchedule
